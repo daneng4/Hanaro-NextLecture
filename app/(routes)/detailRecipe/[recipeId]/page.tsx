@@ -3,6 +3,9 @@
 import { useRecipes } from '@/components/context/recipe-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function DetailRecipe({
@@ -10,10 +13,15 @@ export default function DetailRecipe({
 }: {
   params: { recipeId: string };
 }) {
-  const { recipes } = useRecipes();
+  const { recipes, deleteRecipe, getLastVersion, popVersion } = useRecipes();
   const [timers, setTimers] = useState<{ [key: number]: number | '' }>({});
+  const { data: session } = useSession();
+  const router = useRouter();
 
+  const userEmail = session?.user!.email;
+  const { version, index } = getLastVersion(+recipeId);
   const curRecipe = recipes.find((recipe) => recipe.id === +recipeId);
+
   const handleInputChange = (
     index: number,
     event: React.ChangeEvent<HTMLInputElement>
@@ -34,6 +42,17 @@ export default function DetailRecipe({
     } else {
       alert('유효한 숫자를 입력하세요!');
     }
+  };
+
+  const goBack = () => {
+    router.push('/');
+  };
+
+  const removeCheck = () => {
+    if (confirm('레시피를 삭제하시겠습니까?') === true) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -87,7 +106,36 @@ export default function DetailRecipe({
           </div>
         ))}
       </div>
-      <div className='text-xl mb-3'>수정 기록</div>
+      <div className='text-xl mb-3'>최신 버전</div>
+      <div className='flex flex-row mb-3'>
+        <div className='font-bold mt-2'>{`버전 ${index + 1} (${version?.modifiedTime})`}</div>
+        <Button
+          className='ml-2 bg-purple-400'
+          onClick={() => popVersion(userEmail!, +recipeId)}
+        >
+          이전 버전으로
+        </Button>
+      </div>
+      <div className='flex flex-row justify-between'>
+        <Button className='bg-blue-500' asChild>
+          <Link href={`/editRecipe/${recipeId}`}>수정</Link>
+        </Button>
+        <Button
+          className='bg-red-500'
+          onClick={() => {
+            if (removeCheck()) {
+              deleteRecipe(userEmail!, +recipeId);
+              alert('레시피가 삭제되었습니다!');
+              goBack();
+            }
+          }}
+        >
+          삭제
+        </Button>
+        <Button className='bg-gray-500' onClick={goBack}>
+          목록으로
+        </Button>
+      </div>
     </div>
   );
 }

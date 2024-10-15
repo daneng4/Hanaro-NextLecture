@@ -67,7 +67,7 @@ export default function AddRecipe() {
   return (
     <>
       <div>
-        <h1 className='text-2xl font-bold mb-10'>새 레시피 추가</h1>
+        <h1 className='text-2xl font-bold mb-8'>새 레시피 추가</h1>
       </div>
       <div className='flex flex-col w-full mb-8'>
         <h1 className='font-extrabold'>레시피 제목</h1>
