@@ -119,8 +119,28 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
       modifiedTime: getCurrentTime(),
     };
 
-    // versionList에 새로운 버전 추가
-    updatedRecipe.versionList.push(version);
+    // 기존 버전이 마지막 버전과 동일한지 확인
+    const lastVersion =
+      updatedRecipe.versionList[updatedRecipe.versionList.length - 1];
+
+    // 마지막 버전과 새 버전이 다른 경우에만 버전 추가
+    if (
+      lastVersion.title !== version.title ||
+      JSON.stringify(lastVersion.cooks) !== JSON.stringify(version.cooks) ||
+      JSON.stringify(lastVersion.materials) !==
+        JSON.stringify(version.materials) ||
+      JSON.stringify(lastVersion.tags) !== JSON.stringify(version.tags)
+    ) {
+      updatedRecipe.versionList.push(version);
+    }
+
+    // 가장 마지막 버전으로 Recipe 동기화
+    const latestVersion =
+      updatedRecipe.versionList[updatedRecipe.versionList.length - 1];
+    updatedRecipe.title = latestVersion.title;
+    updatedRecipe.cooks = latestVersion.cooks;
+    updatedRecipe.materials = latestVersion.materials;
+    updatedRecipe.tags = latestVersion.tags;
 
     const updatedRecipes = recipes.map((recipe) =>
       recipe.id === updatedRecipe.id ? updatedRecipe : recipe
@@ -143,8 +163,13 @@ export const RecipeProvider = ({ children }: PropsWithChildren) => {
     const updatedRecipes = recipes.map((recipe) => {
       if (recipe.id === recipeId && recipe.versionList.length > 1) {
         recipe.versionList.pop();
-      } else {
-        alert('첫 버전입니다!!');
+
+        // 가장 마지막 버전으로 Recipe 동기화
+        const latestVersion = recipe.versionList[recipe.versionList.length - 1];
+        recipe.title = latestVersion.title;
+        recipe.cooks = latestVersion.cooks;
+        recipe.materials = latestVersion.materials;
+        recipe.tags = latestVersion.tags;
       }
       return recipe;
     });

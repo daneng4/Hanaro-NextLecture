@@ -4,6 +4,7 @@ import { useRecipes } from '@/components/context/recipe-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 export default function EditRecipe({
@@ -12,6 +13,7 @@ export default function EditRecipe({
   params: { recipeId: string };
 }) {
   const { data: session } = useSession();
+  const router = useRouter();
   const { recipes, editRecipe, getLastVersion } = useRecipes();
   const curRecipe = recipes.find((recipe) => recipe.id === +recipeId);
   const { version: lastVersion } = getLastVersion(+recipeId); // 현재 버전 가져오기
@@ -21,8 +23,11 @@ export default function EditRecipe({
   const [materials, setMaterials] = useState<string[]>(
     lastVersion?.materials || []
   );
+  const [tags, setTags] = useState<string[]>(lastVersion?.tags || []);
+
   const [newMaterial, setNewMaterial] = useState('');
   const [newCook, setNewCook] = useState('');
+  const [newTag, setNewTag] = useState('');
 
   // 재료 추가
   const handleAddMaterial = () => {
@@ -40,6 +45,14 @@ export default function EditRecipe({
     }
   };
 
+  // 태그 추가
+  const handleAddTag = () => {
+    if (newTag.trim()) {
+      setTags([...tags, newTag]);
+      setNewTag('');
+    }
+  };
+
   // 재료 삭제
   const handleRemoveMaterial = (index: number) => {
     setMaterials(materials.filter((_, i) => i !== index));
@@ -48,6 +61,11 @@ export default function EditRecipe({
   // 조리 과정 삭제
   const handleRemoveCook = (index: number) => {
     setCooks(cooks.filter((_, i) => i !== index));
+  };
+
+  // 태그 삭제
+  const handleRemoveTag = (index: number) => {
+    setTags(tags.filter((_, i) => i !== index));
   };
 
   // 레시피 수정 핸들러
@@ -69,7 +87,7 @@ export default function EditRecipe({
       title,
       cooks,
       materials,
-      tags: curRecipe?.tags || [],
+      tags,
       versionList: [...(curRecipe?.versionList || []), updatedVersion],
     };
 
@@ -77,6 +95,8 @@ export default function EditRecipe({
       editRecipe(session.user.email, updatedRecipe);
       alert('레시피가 수정되었습니다.');
     }
+
+    router.replace('/');
   };
 
   return (
@@ -143,20 +163,50 @@ export default function EditRecipe({
                 onClick={() => handleRemoveCook(index)}
                 className='text-red-500'
               >
-                삭제
+                - 삭제
               </button>
             </li>
           ))}
         </ol>
       </div>
 
-      {/* 레시피 수정 버튼 */}
-      <Button
-        onClick={handleEditRecipe}
-        className='mt-4 p-2 bg-blue-500 text-white'
-      >
-        레시피 수정
-      </Button>
+      <div>
+        <label className='block mb-2 font-bold'>태그</label>
+        <div className='flex mb-4'>
+          <Input
+            type='text'
+            value={newTag}
+            onChange={(e) => setNewTag(e.target.value)}
+            placeholder='조리 과정을 입력하세요'
+            className='w-full p-2 border'
+          />
+          <Button onClick={handleAddTag} className='ml-2 p-2 bg-blue-500'>
+            추가
+          </Button>
+        </div>
+        <ul>
+          {tags.map((tag, index) => (
+            <li key={index} className='mb-2'>
+              {tag}{' '}
+              <button
+                onClick={() => handleRemoveTag(index)}
+                className='text-red-500'
+              >
+                삭제
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div className='flex flex-row justify-between gap-5 mt-5'>
+        <Button
+          onClick={handleEditRecipe}
+          className='mt-4 p-2 bg-blue-500 text-white '
+        >
+          레시피 수정
+        </Button>
+      </div>
     </div>
   );
 }

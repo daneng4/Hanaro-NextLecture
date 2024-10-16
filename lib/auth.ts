@@ -29,7 +29,8 @@ export const {
           return null;
         console.log('🚀  credentials:', credentials);
         const { email } = credentials;
-        const user = { id: '1', email, name: 'GUEST' } as User;
+
+        const user = { id: '1', email, name: email } as User;
         return user;
       },
     }),
@@ -37,16 +38,6 @@ export const {
     GitHub,
   ],
   callbacks: {
-    // authorized({ auth, request: { nextUrl } }) {
-    //   const didLogin = !!auth?.user;
-    //   console.log(
-    //     "🚀 auth.ts > callbacks > authorized - didLogin:",
-    //     didLogin,
-    //     nextUrl.pathname
-    //   );
-    //   // if (didLogin) return Response.redirect(new URL('/about', nextUrl));
-    //   return true;
-    // },
     session({ session }) {
       // console.log("cb - session:", session);
       return session;

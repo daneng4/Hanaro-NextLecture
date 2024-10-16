@@ -9,7 +9,7 @@ import { useState } from 'react';
 
 export default function AddRecipe() {
   const { data: session } = useSession();
-  const route = useRouter();
+  const router = useRouter();
   const { recipes, addRecipe } = useRecipes();
 
   // 레시피 정보 상태 관리
@@ -41,14 +41,9 @@ export default function AddRecipe() {
       ],
     };
 
-    console.log('ADDRECIPE');
     addRecipe(newRecipe, session?.user?.email as string); // 레시피 추가
     alert('레시피가 저장되었습니다.');
-    route.push('/');
-  };
-
-  const goBack = () => {
-    route.push('/');
+    router.push('/');
   };
 
   // 각각의 항목 추가 핸들러
@@ -141,7 +136,7 @@ export default function AddRecipe() {
         <Button onClick={handleAddRecipe} className='bg-blue-400 w-full mr-10'>
           레시피 저장
         </Button>
-        <Button onClick={goBack} className='bg-gray-400 w-full'>
+        <Button onClick={() => router.back()} className='bg-gray-400 w-full'>
           취소
         </Button>
       </div>

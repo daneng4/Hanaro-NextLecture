@@ -1,10 +1,31 @@
 'use client';
 
 import { useRecipes } from '@/components/context/recipe-context';
+import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
 export default function Home() {
   const { recipes } = useRecipes();
+  const { data: session } = useSession();
+
+  if (session?.user === undefined) {
+    return (
+      <div className='flex flex-col w-2/3 items-center bg-slate-100 sm:p-10 font-[family-name:var(--font-geist-sans)]'>
+        <div className='bg-red-300 w-full text-center text-3xl'>
+          먼저 로그인해주세요!
+        </div>
+      </div>
+    );
+  }
+  if (recipes.length === 0) {
+    return (
+      <div className='flex flex-col w-2/3 items-center bg-slate-100 sm:p-10 font-[family-name:var(--font-geist-sans)]'>
+        <div className='bg-red-300 w-full text-center text-3xl'>
+          레시피가 없습니다. 레시피를 추가해주세요!
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='grid w-2/3 sm:p-10 font-[family-name:var(--font-geist-sans)]'>

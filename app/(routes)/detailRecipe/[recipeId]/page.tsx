@@ -13,14 +13,14 @@ export default function DetailRecipe({
 }: {
   params: { recipeId: string };
 }) {
-  const { recipes, deleteRecipe, getLastVersion, popVersion } = useRecipes();
+  const { deleteRecipe, getLastVersion, popVersion } = useRecipes();
   const [timers, setTimers] = useState<{ [key: number]: number | '' }>({});
   const { data: session } = useSession();
   const router = useRouter();
 
   const userEmail = session?.user!.email;
   const { version, index } = getLastVersion(+recipeId);
-  const curRecipe = recipes.find((recipe) => recipe.id === +recipeId);
+  // const curRecipe = recipes.find((recipe) => recipe.id === +recipeId);
 
   const handleInputChange = (
     index: number,
@@ -44,10 +44,6 @@ export default function DetailRecipe({
     }
   };
 
-  const goBack = () => {
-    router.push('/');
-  };
-
   const removeCheck = () => {
     if (confirm('레시피를 삭제하시겠습니까?') === true) {
       return true;
@@ -57,10 +53,10 @@ export default function DetailRecipe({
 
   return (
     <div className='items-center sm:p-10 font-[family-name:var(--font-geist-sans)]'>
-      <div className='text-2xl font-bold mb-5'>{`< ${curRecipe?.title} >`}</div>
+      <div className='text-2xl font-bold mb-5'>{`< ${version?.title} >`}</div>
       <div className='text-xl mb-3'>조리과정</div>
       <div>
-        {curRecipe?.cooks.map((cook, index) => (
+        {version?.cooks.map((cook, index) => (
           <>
             <div
               key={index}
@@ -86,8 +82,9 @@ export default function DetailRecipe({
           </>
         ))}
       </div>
+      <div className='text-xl'>태그</div>
       <div className='flex flex-row mb-4'>
-        {curRecipe?.tags.map((tag, index) => (
+        {version?.tags.map((tag, index) => (
           <>
             <div
               key={index}
@@ -98,7 +95,7 @@ export default function DetailRecipe({
       </div>
       <div className='text-xl mb-3'>재료</div>
       <div className='flex flex-col mb-4'>
-        {curRecipe?.materials.map((mat, index) => (
+        {version?.materials.map((mat, index) => (
           <div key={index}>
             <ul>
               <li className='mb-1'>{`✅  ${mat}`}</li>
@@ -107,7 +104,7 @@ export default function DetailRecipe({
         ))}
       </div>
       <div className='text-xl mb-3'>최신 버전</div>
-      <div className='flex flex-row mb-3'>
+      <div className='flex flex-row mb-7'>
         <div className='font-bold mt-2'>{`버전 ${index + 1} (${version?.modifiedTime})`}</div>
         <Button
           className='ml-2 bg-purple-400'
@@ -116,23 +113,24 @@ export default function DetailRecipe({
           이전 버전으로
         </Button>
       </div>
-      <div className='flex flex-row justify-between'>
-        <Button className='bg-blue-500' asChild>
+      <div className='flex flex-row justify-between gap-3'>
+        <Button className='bg-blue-500 w-full' asChild>
           <Link href={`/editRecipe/${recipeId}`}>수정</Link>
         </Button>
         <Button
-          className='bg-red-500'
+          className='bg-red-500 w-full'
           onClick={() => {
             if (removeCheck()) {
               deleteRecipe(userEmail!, +recipeId);
+              console.log('delete recipe');
               alert('레시피가 삭제되었습니다!');
-              goBack();
+              router.replace('/');
             }
           }}
         >
           삭제
         </Button>
-        <Button className='bg-gray-500' onClick={goBack}>
+        <Button className='bg-gray-500 w-full' onClick={() => router.push('/')}>
           목록으로
         </Button>
       </div>
