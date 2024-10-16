@@ -11,16 +11,14 @@ export default function Home() {
   if (session?.user === undefined) {
     return (
       <div className='flex flex-col w-2/3 items-center bg-slate-100 sm:p-10 font-[family-name:var(--font-geist-sans)]'>
-        <div className='bg-red-300 w-full text-center text-3xl'>
-          먼저 로그인해주세요!
-        </div>
+        <div className='w-full text-center text-3xl'>먼저 로그인해주세요!</div>
       </div>
     );
   }
   if (recipes.length === 0) {
     return (
       <div className='flex flex-col w-2/3 items-center bg-slate-100 sm:p-10 font-[family-name:var(--font-geist-sans)]'>
-        <div className='bg-red-300 w-full text-center text-3xl'>
+        <div className='w-full text-center text-3xl'>
           레시피가 없습니다. 레시피를 추가해주세요!
         </div>
       </div>
