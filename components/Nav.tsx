@@ -23,14 +23,14 @@ export default async function Nav() {
 
         {session?.user ? (
           <Link
-            href='/api/auth/signout'
+            href='/api/auth/signout?callbackUrl=/'
             className='text-white px-5 py-4 rounded-lg bg-red-500'
           >
             로그아웃
           </Link>
         ) : (
           <Link
-            href='/api/auth/signin'
+            href='/api/auth/signin?callbackUrl=/'
             className='text-white px-5 py-4 rounded-lg w-fit bg-blue-500'
           >
             로그인

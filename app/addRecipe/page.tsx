@@ -29,6 +29,16 @@ export default function AddRecipe() {
       tags,
       cooks,
       materials,
+      versionList: [
+        {
+          id: recipes.length + 1,
+          title,
+          tags,
+          cooks,
+          materials,
+          modifiedTime: new Date().toISOString(), // 첫 번째 버전의 수정 시간
+        },
+      ],
     };
 
     console.log('ADDRECIPE');
