@@ -75,7 +75,20 @@ const saveRecipesToLocalStorage = (
 };
 
 const getCurrentTime = (): string => {
-  return new Date().toISOString();
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const day = date.getDate();
+  let hour = date.getHours();
+  const min = date.getMinutes();
+  const sec = date.getSeconds();
+  const period = hour < 12 ? '오전' : '오후';
+  if (hour === 0) {
+    hour = 12;
+  } else if (hour > 12) {
+    hour = hour - 12;
+  }
+  return `${year}. ${month}. ${day}. ${period} ${hour}:${min}:${sec}`;
 };
 
 export const RecipeProvider = ({ children }: PropsWithChildren) => {
